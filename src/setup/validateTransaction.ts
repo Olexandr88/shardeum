@@ -28,11 +28,11 @@ export const validateTransaction =
         tx.internalTXType === InternalTXType.ChangeConfig ||
         internalTx.internalTXType === InternalTXType.ChangeNetworkParam
       ) {
-        const devPublicKeys = shardus.getDevPublicKeys()
+        const devPublicKeys = shardus.getMultisigPublicKeys()
         const is_array_sig = Array.isArray(tx.sign) === true
         const requiredSigs = Math.max(1, ShardeumFlags.minSignaturesRequiredForGlobalTxs)
         //Ensure old single sig / non-array are still compitable
-        let sigs: ShardusTypes.Sign[] = is_array_sig ? tx.sign : [tx.sign]
+        const sigs: ShardusTypes.Sign[] = is_array_sig ? tx.sign : [tx.sign]
         const { sign, ...txWithoutSign } = tx
         const authorized = verifyMultiSigs(
           txWithoutSign,
