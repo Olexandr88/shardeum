@@ -8,6 +8,7 @@ import { logFlags } from '..'
 import config from '../config'
 import { comparePropertiesTypes } from '../utils'
 import { Utils } from '@shardus/types'
+import { ethers } from 'ethers'
 
 type Response = {
   result: string
@@ -47,7 +48,8 @@ export const validateTransaction =
             const givenConfig = Utils.safeJsonParse(tx.config)
             if (
               comparePropertiesTypes(omitDevKeys(givenConfig), config.server) &&
-              isValidDevKeyAddition(givenConfig)
+              isValidDevKeyAddition(givenConfig) &&
+              isValidMultisigKeyAddition(givenConfig)
             ) {
               return { result: 'pass', reason: 'valid' }
             } else {
@@ -116,12 +118,12 @@ export const validateTransaction =
   }
 
 function omitDevKeys(givenConfig: any): any {
-  if (!givenConfig.debug?.devPublicKeys) {
+  if (!givenConfig.debug?.devPublicKeys || !givenConfig.debug?.multisigKeys) {
     return givenConfig
   }
 
   const { debug, ...restOfConfig } = givenConfig
-  const { devPublicKeys, ...restOfDebug } = debug
+  const { devPublicKeys, multisigKeys, ...restOfDebug } = debug
 
   if (Object.keys(restOfDebug).length > 0) {
     return { ...restOfConfig, debug: restOfDebug }
@@ -143,6 +145,26 @@ function isValidDevKeyAddition(givenConfig: any): boolean {
 
     // eslint-disable-next-line security/detect-object-injection
     const securityLevel = devPublicKeys[key]
+    if (!Object.values(DevSecurityLevel).includes(securityLevel)) {
+      return false
+    }
+  }
+  return true
+}
+
+function isValidMultisigKeyAddition(givenConfig: any): boolean {
+  const multisigKeys = givenConfig.debug?.multisigKeys
+  if (!multisigKeys) {
+    return true
+  }
+
+  for (const key in multisigKeys) {
+    if (!ethers.isAddress(key)) {
+      return false
+    }
+
+    // eslint-disable-next-line security/detect-object-injection
+    const securityLevel = multisigKeys[key]
     if (!Object.values(DevSecurityLevel).includes(securityLevel)) {
       return false
     }
