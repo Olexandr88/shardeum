@@ -1,9 +1,4 @@
-import {
-  AccessListEIP2930Transaction,
-  Transaction,
-  TransactionFactory,
-  TransactionType,
-} from '@ethereumjs/tx'
+import { Transaction, TransactionFactory, TransactionType } from '@ethereumjs/tx'
 import * as crypto from '@shardus/crypto-utils'
 import { toBuffer } from 'ethereumjs-util'
 import { ShardeumFlags } from '../shardeum/shardeumFlags'

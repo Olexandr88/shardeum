@@ -4,7 +4,6 @@ import { InitRewardTimes, InternalTx, InternalTXType } from '../shardeum/shardeu
 import { crypto, getTransactionObj, isDebugTx, isInternalTx, isInternalTXGlobal, verifyMultiSigs } from './helpers'
 import * as InitRewardTimesTx from '../tx/initRewardTimes'
 import * as AccountsStorage from '../storage/accountStorage'
-import { logFlags } from '..'
 import config from '../config'
 import { comparePropertiesTypes } from '../utils'
 import { Utils } from '@shardus/types'
